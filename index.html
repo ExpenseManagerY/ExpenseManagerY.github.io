@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Submit Data</title>
+</head>
+<body>
+    <h1>Submit Your Information</h1>
+    
+    <form id="dataForm">
+        <label for="itemName">Item Name:</label>
+        <input type="text" id="itemName" name="itemName" required><br><br>
+
+        <label for="amount">Amount:</label>
+        <input type="number" id="amount" name="amount" required><br><br>
+
+        <label for="bankUPI">Bank/UPI:</label>
+        <input type="text" id="bankUPI" name="bankUPI" required><br><br>
+
+        <!-- Radio buttons for Credit/Debit -->
+        <label>Transaction Type:</label><br>
+        <input type="radio" id="credit" name="transactionType" value="Credit" required>
+        <label for="credit">Credit</label><br>
+        <input type="radio" id="debit" name="transactionType" value="Debit" required>
+        <label for="debit">Debit</label><br><br>
+
+        <button type="button" onclick="submitData()">Submit</button>
+        <button type="button" onclick="goToDataPage()">Go to Data Page</button>
+    </form>
+
+    <script>
+        function submitData() {
+            const itemName = document.getElementById('itemName').value;
+            const amount = document.getElementById('amount').value;
+            const bankUPI = document.getElementById('bankUPI').value;
+            const transactionType = document.querySelector('input[name="transactionType"]:checked').value; // Get selected radio button
+            const date = new Date(); // Capture current date and time
+
+            if(itemName && amount && bankUPI) {
+                // Retrieve the existing data array from local storage
+                let dataArray = JSON.parse(localStorage.getItem('dataArray')) || [];
+
+                // Create a new entry object with date and time
+                const entry = {
+                    itemName,
+                    amount,
+                    bankUPI,
+                    transactionType, // Add transaction type
+                    date: date.toLocaleDateString(), // Format date
+                    time: date.toLocaleTimeString(),  // Format time
+                    day: date.toLocaleString('en-US', { weekday: 'long' }) // Get day of the week
+                };
+
+                // Push the new entry into the data array
+                dataArray.push(entry);
+
+                // Store the updated array back into local storage
+                localStorage.setItem('dataArray', JSON.stringify(dataArray));
+
+                // Redirect to the data page
+                window.location.href = 'data.html';
+            } else {
+                alert('Please fill in all fields.');
+            }
+        }
+
+        function goToDataPage() {
+            window.location.href = 'data.html';
+        }
+    </script>
+</body>
+</html>
