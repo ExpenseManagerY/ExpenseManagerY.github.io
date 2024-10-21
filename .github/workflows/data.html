@@ -1,43 +1,118 @@
-# Simple workflow for deploying static content to GitHub Pages
-name: Deploy static content to Pages
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Data Page</title>
+    <style>
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+        }
 
-on:
-  # Runs on pushes targeting the default branch
-  push:
-    branches: ["main"]
+        table, th, td {
+            border: 1px solid black;
+        }
 
-  # Allows you to run this workflow manually from the Actions tab
-  workflow_dispatch:
+        th, td {
+            padding: 10px;
+            text-align: left;
+        }
 
-# Sets permissions of the GITHUB_TOKEN to allow deployment to GitHub Pages
-permissions:
-  contents: read
-  pages: write
-  id-token: write
+        th {
+            background-color: #f2f2f2;
+        }
+    </style>
+</head>
+<body>
+    <h1>Submitted Data</h1>
 
-# Allow only one concurrent deployment, skipping runs queued between the run in-progress and latest queued.
-# However, do NOT cancel in-progress runs as we want to allow these production deployments to complete.
-concurrency:
-  group: "pages"
-  cancel-in-progress: false
+    <!-- Labels for Credit and Debit Amounts -->
+    <h2>Credit Amount: ₹<span id="creditAmount">0</span></h2>
+    <h2>Debit Amount: ₹<span id="debitAmount">0</span></h2>
 
-jobs:
-  # Single deploy job since we're just deploying
-  deploy:
-    environment:
-      name: github-pages
-      url: ${{ steps.deployment.outputs.page_url }}
-    runs-on: ubuntu-latest
-    steps:
-      - name: Checkout
-        uses: actions/checkout@v4
-      - name: Setup Pages
-        uses: actions/configure-pages@v5
-      - name: Upload artifact
-        uses: actions/upload-pages-artifact@v3
-        with:
-          # Upload entire repository
-          path: '.'
-      - name: Deploy to GitHub Pages
-        id: deployment
-        uses: actions/deploy-pages@v4
+    <!-- Delete button to clear all submitted data -->
+    <button onclick="deleteData()">Delete All Data</button>
+
+    <!-- Table to display the data in a structured format like Excel -->
+    <table id="dataTable">
+        <thead>
+            <tr>
+                <th>Item Name</th>
+                <th>Amount</th>
+                <th>Bank/UPI</th>
+                <th>Transaction Type</th> <!-- New Column -->
+                <th>Date</th>
+                <th>Day</th>
+                <th>Time</th>
+            </tr>
+        </thead>
+        <tbody id="dataDisplay">
+            <!-- Data will be inserted here -->
+        </tbody>
+    </table>
+
+    <button onclick="goBack()">Go Back to Homepage</button>
+
+    <script>
+        function displayData() {
+            // Retrieve the data array from local storage
+            const dataArray = JSON.parse(localStorage.getItem('dataArray')) || [];
+
+            let totalCredit = 0; // Initialize total credit
+            let totalDebit = 0;  // Initialize total debit
+
+            // Check if there's any data to display
+            if (dataArray.length > 0) {
+                let displayContent = '';
+
+                // Loop through each entry and display it in table rows
+                dataArray.forEach(data => {
+                    displayContent += `
+                        <tr>
+                            <td>${data.itemName}</td>
+                            <td>${parseFloat(data.amount).toFixed(2)}</td>
+                            <td>${data.bankUPI}</td>
+                            <td>${data.transactionType}</td>
+                            <td>${data.date}</td>
+                            <td>${data.day}</td>
+                            <td>${data.time}</td>
+                        </tr>`;
+                    
+                    // Calculate the credit or debit amounts
+                    if (data.transactionType === 'Credit') {
+                        totalCredit += parseFloat(data.amount);
+                    } else if (data.transactionType === 'Debit') {
+                        totalDebit += parseFloat(data.amount);
+                    }
+                });
+
+                document.getElementById('dataDisplay').innerHTML = displayContent;
+            } else {
+                document.getElementById('dataDisplay').innerHTML = `
+                    <tr><td colspan="7">No data submitted yet.</td></tr>
+                `;
+            }
+
+            // Update the credit and debit amounts display
+            document.getElementById('creditAmount').textContent = totalCredit.toFixed(2);
+            document.getElementById('debitAmount').textContent = totalDebit.toFixed(2);
+        }
+
+        function deleteData() {
+            // Clear all data from local storage
+            localStorage.removeItem('dataArray');
+
+            // Refresh the page to reflect changes
+            displayData();
+        }
+
+        function goBack() {
+            window.location.href = 'index.html';
+        }
+
+        window.onload = displayData;
+    </script>
+</body>
+</html>
