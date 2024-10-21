@@ -9,21 +9,24 @@
     <h1>Submit Your Information</h1>
     
     <form id="dataForm">
-        <label for="itemName">Item Name:</label>
-        <input type="text" id="itemName" name="itemName" required><br><br>
 
-        <label for="amount">Amount:</label>
-        <input type="number" id="amount" name="amount" required><br><br>
-
-        <label for="bankUPI">Bank/UPI:</label>
-        <input type="text" id="bankUPI" name="bankUPI" required><br><br>
-
+        
         <!-- Radio buttons for Credit/Debit -->
         <label>Transaction Type:</label><br>
         <input type="radio" id="credit" name="transactionType" value="Credit" required>
         <label for="credit">Credit</label><br>
         <input type="radio" id="debit" name="transactionType" value="Debit" required>
         <label for="debit">Debit</label><br><br>
+        
+        <label for="bankUPI">Bank/UPI:</label>
+        <input type="text" id="bankUPI" name="bankUPI" required><br><br>
+        
+        <label for="amount">Amount:</label>
+        <input type="number" id="amount" name="amount" required><br><br>
+        
+        <label for="itemName">Particulars:</label>
+        <input type="text" id="itemName" name="itemName" required><br><br>
+
 
         <button type="button" onclick="submitData()">Submit</button>
         <button type="button" onclick="goToDataPage()">Go to Data Page</button>
